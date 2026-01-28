@@ -8,7 +8,6 @@
 
 from __future__ import annotations
 from functools import lru_cache
-import string
 from typing import Mapping, Optional, Set, Tuple, Union
 
 from logic_utils import frozen, memoized_parameterless_method
@@ -116,7 +115,7 @@ class Formula:
         if is_unary(self.root):
             return self.root + str(self.first)
         if is_binary(self.root):
-            return f'({str(self.first)} {self.root} {str(self.second)})'
+            return f'({str(self.first)}{self.root}{str(self.second)})'
 
     def __eq__(self, other: object) -> bool:
         """Compares the current formula with the given one.
@@ -176,6 +175,8 @@ class Formula:
         if is_variable(self.root):
             return set()
         operators = {self.root}
+        if is_unary(self.root):
+            return operators | self.first.operators()
         if is_binary(self.root):
             return operators | self.first.operators() | self.second.operators()
         
